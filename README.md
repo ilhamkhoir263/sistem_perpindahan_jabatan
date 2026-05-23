@@ -42,9 +42,6 @@ Berdasarkan arsitektur sistem, terdapat 5 aktor utama yang saling terintegrasi d
 
 ---
 
-## 🔄 Alur Proses Bisnis (Flowchart Logic)
-
-Proses pengajuan perpindahan jabatan berjalan secara kronologis melalui tahapan berikut:
 ---
 
 ## 🛠️ Teknologi yang Digunakan
@@ -55,15 +52,3 @@ Proses pengajuan perpindahan jabatan berjalan secara kronologis melalui tahapan 
 * **Library & Tema UI:** Vendor Assets (Bootstrap / AdminLTE sesuai dengan struktur folder `dist/` dan `assets/`)
 * **Email Service:** PHP内置/PHPMailer (Terstruktur di folder `vendor/phpmailer/` untuk fitur pengiriman OTP, Verifikasi Registrasi, dan Notifikasi Status Berkas)
 
----
-
-## 📁 Struktur Folder Utama (Modul Perpindahan)
-
-Berikut adalah struktur berkas utama yang merepresentasikan modul perpindahan jabatan pada repositori ini:
-
-* `form_perpindahan_jabatan.php` - Halaman formulir pendaftaran dan upload dokumen bagi Peserta.
-* `list_perpindahan_pengusul.php` - Dashboard bagi instansi pengusul/peserta untuk melihat list pengajuan.
-* `list_perpindahan.php` - Halaman monitoring status pengajuan seluruh pegawai.
-* `detail_input_perpindahan.php` - Halaman review detail isian data perpindahan.
-* `detail_verif_perpindahan.php` - Interface bagi Verifikator untuk melakukan *approve* atau *reject* berkas pendaftaran.
-* `auth_guard.php` / `role_checker.php` - Modul keamanan enkripsi sesi untuk membatasi hak akses
