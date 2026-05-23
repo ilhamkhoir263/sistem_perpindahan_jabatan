@@ -1,0 +1,15 @@
+# Mengabaikan database dump dan file backup
+db_jfpkp2.sql
+index_asli.php
+tesssss.html
+tes.html
+tes_landing_page.html
+website_mbak_hira
+
+# Mengabaikan folder berisi file upload user / data rahasia
+uploads/
+note/
+Tes_data_berkas/
+
+# Mengabaikan SEMUA file yang ada kata "kenaikan"
+*kenaikan*

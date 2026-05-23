@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Database Instansi Pembina JF</title>
+  <style>
+    :root {
+      --primary: #0f62fe;
+      --secondary: #111827;
+      --bg: #374357;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --green-select: #10b981;
+      --red-select: #ef4444;
+      --neutral-select: #e5e7eb;
+      --success: #27F554;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; display: flex; background: var(--bg); color: var(--text); }
+
+    /* Sidebar */
+    .sidebar { width: 260px; background: var(--secondary); color: #fff; display: flex; flex-direction: column; min-height: 100vh; padding: 20px 16px; }
+    .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+    .brand h1 { font-size: 18px; margin: 0; line-height: 1.2; }
+    .logo-pupr { width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 10px; padding: 4px; }
+    .menu { display: flex; flex-direction: column; gap: 12px; }
+    .menu a { color: #e5e7eb; text-decoration: none; padding: 10px 12px; border-radius: 8px; transition: background 0.3s; }
+    .menu a:hover, .menu a.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
+    .profile { margin-top: auto; display: flex; align-items: center; gap: 12px; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 16px; }
+    .profile img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+    .profile div { font-size: 14px; }
+
+    /* Main */
+    main { flex: 1; padding: 24px; display: flex; flex-direction: column; background: #f9fafb; }
+    header { background: #fff; padding: 12px 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); margin-bottom: 24px; }
+    .data-section { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+
+    /* Nama, NIP, Telepon */
+    .info-row { display: flex; align-items: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap; }
+    .info-field { display: flex; align-items: center; gap: 8px; }
+    .info-field label { width: 60px; font-weight: 500; }
+    .info-field input { width: 200px; padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; background: #f9f9f9; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 16px; }
+    th, td { border: 1px solid #e5e7eb; padding: 10px 12px; vertical-align: middle; }
+    td:first-child { width: 70%; }
+    td:nth-child(2) { width: 150px; text-align: center; }
+    td:nth-child(3) { width: 100px; text-align: center; }
+
+    button { padding: 6px 12px; border: none; border-radius: 6px; background: var(--primary); color: #fff; cursor: pointer; font-size: 13px; }
+    button:hover { opacity: 0.9; }
+
+    select.eval {
+      padding: 6px 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      width: 90px;
+      transition: all 0.3s ease;
+    }
+    select.eval option[value=""] { background: var(--neutral-select); color: #4b5563; }
+    select.eval option[value="Sesuai"] { background: var(--green-select); color: white; }
+    select.eval option[value="Tidak Sesuai"] { background: var(--red-select); color: white; }
+
+    .section-header { margin: 30px 0 12px; }
+    .section-header h3 { margin: 0; color: var(--primary); font-size: 16px; }
+
+    /* Summary Box */
+    .summary-box { background: #fef3c7; padding: 16px; border-radius: 8px; margin-top: 20px; font-weight: 500; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+    .summary-row:last-child { margin-bottom: 0; font-weight: 600; }
+    #hasil.sesuai { background: var(--success) !important; color: #000 !important; font-weight: 600; padding: 4px 10px; border-radius: 6px; }
+    #hasil.belum { color: #92400e; font-weight: 600; }
+    #hasil.revisi { color: #dc2626; font-weight: 600; }
+
+    #btnSubmit { padding: 10px 20px; border: none; border-radius: 6px; background: var(--primary); color: #fff; cursor: pointer; font-size: 14px; margin-top: 20px; float: right; }
+    #btnSubmit:hover { opacity: .9; }
+
+    footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 30px; padding: 16px 0; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="https://media.licdn.com/dms/image/v2/D560BAQHDiS0wl-00RQ/company-logo_200_200/B56Zbo7kS2H4AY-/0/1747664651921/kementerian_perumahan_dan_kawasan_permukiman_logo?e=2147483647&v=beta&t=XTojfNC7c_RIF-afeLXRdzWr6SosOG8QYC8ikAzyp8E" alt="Logo Kementerian PUPR" class="logo-pupr">
+      <h1>Instansi Pembina<br>Jabatan Fungsional</  h1>
+    </div>
+
+    <nav class="menu">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Database</a>
+      <a href="#">Uji Kompetensi</a>
+      <a href="#">Rekomendasi Formasi</a>
+      <a href="#">Peraturan</a>
+      <a href="#">Pengaturan</a>
+    </nav>
+
+    <div class="profile">
+      <img src="https://i.pravatar.cc/36" alt="User" />
+      <div>Henry Klein<br><span style="font-size:12px;color:#9ca3af;">Admin</span></div>
+    </div>
+  </aside>
+
+  <main>
+    <header>
+      <div>
+        Verifikasi Peserta Uji Kompetensi Jabatan Fungsional<br>
+        <span style="color:var(--muted);font-size:13px">Penilaian Persyaratan dan Dokumen</span>
+      </div>
+    </header>
+
+    <section class="data-section">
+      <!-- Nama, NIP, Telepon -->
+      <div class="info-row">
+        <div class="info-field">
+          <label>Nama</label>
+          <input type="text" value="RIEZA PERDANA, ST" readonly>
+        </div>
+        <div class="info-field">
+          <label>NIP</label>
+          <input type="text" value="198702222011011002" readonly>
+        </div>
+        <div class="info-field">
+          <label>Telepon</label>
+          <input type="text" value="085739933664" readonly>
+        </div>
+      </div>
+
+      <!-- Persyaratan Umum -->
+      <div class="section-header">
+        <h3>A. Persyaratan Umum</h3>
+      </div>
+
+      <table>
+        <tr><td>1. Pegawai berstatus Pegawai Negeri Sipil (PNS)</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>2. Pendidikan terakhir pegawai minimal S-1/D4</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>3. Pendidikan sesuai dengan bidang yang dibutuhkan</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>4. Pengalaman kerja bidang Perumahan minimal 2 tahun</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>5. Usia pegawai memenuhi batas maksimal<br>a. ≤53 tahun (Ahli Pertama/Muda)<br>b. ≤55 tahun (Ahli Madya)<br>c. ≤60 tahun (Ahli Utama)</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+      </table>
+
+      <!-- Dokumen Persyaratan -->
+      <div class="section-header">
+        <h3>B. Dokumen Persyaratan</h3>
+      </div>
+
+      <table>
+        <tr><td>1. Surat Usulan Perpindahan Jabatan ditandatangani pejabat tinggi pratama</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>2. Salinan Surat Penetapan atau Rekomendasi Formasi resmi</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>3. Surat Usulan Uji Kompetensi ditandatangani pejabat berwenang</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>4. Daftar Riwayat Hidup/Portofolio terbaru memuat pengalaman kerja relevan</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>5. Salinan SK CPNS</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>6. Salinan SK PNS</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>7. SK Pangkat/Golongan terakhir</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>8. SK Jabatan terakhir</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>9. Nilai SKP dua tahun terakhir minimal “Baik”</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>10. Salinan Ijazah</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>11. Transkrip Nilai</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>12. Surat Pernyataan Integritas & Moralitas Baik</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>13. Surat Pernyataan Bersedia Diangkat dalam Jafung</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>14. Surat Pernyataan Pengalaman Tugas minimal 2 tahun</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+        <tr><td>15. Surat Keterangan Rencana Penempatan dari pejabat berwenang</td><td><button>Buka Dokumen</button></td><td><select class="eval"><option value="" selected>Pilih</option><option value="Sesuai">Sesuai</option><option value="Tidak Sesuai">Tidak Sesuai</option></select></td></tr>
+      </table>
+
+      <!-- Summary -->
+      <div class="summary-box">
+        <div class="summary-row"><span>Jumlah Berkas Sesuai</span><span id="jumlah">0</span></div>
+        <div class="summary-row"><span>Jumlah Berkas yang Diperiksa</span><span>20</span></div>
+        <div class="summary-row"><span>Persentase</span><span id="persen">0.00%</span></div>
+        <div class="summary-row"><span>Hasil Evaluasi</span><span id="hasil" class="belum">Belum Diverifikasi</span></div>
+      </div>
+
+      <!-- Catatan Evaluasi -->
+      <div class="section-header">
+        <h3>C. Catatan Evaluasi</h3>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label for="catatan-evaluasi" style="font-weight: 500; display: block; margin-bottom: 8px;">Tambahkan Catatan Evaluasi</label>
+        <textarea id="catatan-evaluasi" rows="4" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; resize: vertical;" placeholder="Masukkan catatan evaluasi di sini..."></textarea>
+      </div>
+
+      <button type="button" id="btnSubmit">Submit</button>
+    </section>
+
+    <footer>
+      © 2025 Instansi Pembina Jabatan Fungsional — Semua Hak Dilindungi.
+    </footer>
+  </main>
+
+  <!-- SCRIPT PERHITUNGAN -->
+  <script>
+    const selects = document.querySelectorAll('select.eval');
+    const elJumlah = document.getElementById('jumlah');
+    const elPersen = document.getElementById('persen');
+    const elHasil  = document.getElementById('hasil');
+    const totalKomponen = 20;
+
+    function updateSummary() {
+      const sesuaiCount = Array.from(selects).filter(s => s.value === 'Sesuai').length;
+      const persen = ((sesuaiCount / totalKomponen) * 100).toFixed(2);
+
+      elJumlah.textContent = sesuaiCount;
+      elPersen.textContent = persen + '%';
+
+      // Hapus semua kelas status
+      elHasil.classList.remove('sesuai', 'revisi', 'belum');
+
+      if (persen === '0.00') {
+        elHasil.textContent = 'Belum Diverifikasi';
+        elHasil.classList.add('belum');
+      } else if (sesuaiCount === totalKomponen) {
+        elHasil.textContent = 'Berkas Sesuai';
+        elHasil.classList.add('sesuai');
+      } else {
+        elHasil.textContent = 'Perlu Revisi';
+        elHasil.classList.add('revisi');
+      }
+    }
+
+    selects.forEach(select => {
+      select.addEventListener('change', function() {
+        if (this.value === 'Sesuai') {
+          this.style.backgroundColor = 'var(--green-select)';
+          this.style.color = 'white';
+        } else if (this.value === 'Tidak Sesuai') {
+          this.style.backgroundColor = 'var(--red-select)';
+          this.style.color = 'white';
+        } else {
+          this.style.backgroundColor = 'var(--neutral-select)';
+          this.style.color = '#4b5563';
+        }
+        updateSummary();
+      });
+
+      // Default
+      select.style.backgroundColor = 'var(--neutral-select)';
+      select.style.color = '#4b5563';
+    });
+
+    updateSummary();
+
+    document.getElementById('btnSubmit').addEventListener('click', () => {
+      const catatan = document.getElementById('catatan-evaluasi').value.trim();
+      alert(`Formulir Disubmit!\nJumlah Berkas Sesuai: ${elJumlah.textContent}\nPersentase: ${elPersen.textContent}\nHasil: ${elHasil.textContent}\n\nCatatan:\n${catatan || '(tidak ada catatan)'}`);
+    });
+  </script>
+</body>
+</html>

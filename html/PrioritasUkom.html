@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prioritas Jafung – Selisih 0 Paling Atas</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body{font-family:Arial,sans-serif;margin:20px;background:#f4f6f9;color:#000;}
+    .container{max-width:1200px;margin:auto;background:#fff;padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.1);}
+    h1,h2{text-align:center;color:#1a1a1a;}
+    .upload-area{border:2px dashed #2980b9;padding:20px;text-align:center;border-radius:8px;margin:20px 0;background:#ecf0f1;}
+    .upload-area:hover{background:#d5dbdb;}
+    input[type=file], input[type=number]{margin:10px 0;padding:8px;border:1px solid #7f8c8d;border-radius:4px;}
+    button{background:#27ae60;color:#fff;padding:12px 24px;border:none;border-radius:5px;cursor:pointer;font-size:16px;font-weight:bold;}
+    button:hover{background:#219150;}
+    button:disabled{background:#95a5a6;color:#fff;cursor:not-allowed;}
+    table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px;}
+    th,td{border:1px solid #bdc3c7;padding:10px;text-align:left;}
+    th{background:#2c3e50;color:#fff;font-weight:bold;}
+    tr:nth-child(even){background:#f8f9fa;}
+    
+    /* WARNA PRIORITAS - KONTRAS TINGGI */
+    .super-urgent{background:#c0392b !important;color:#fff !important;} /* Merah Tua (Selisih 0) */
+    .urgent{background:#e74c3c !important;color:#fff !important;}       /* Merah Muda (Selisih 1) */
+    .normal{background:#f39c12 !important;color:#fff !important;}       /* Oranye (≥2) */
+    .low{background:#95a5a6 !important;color:#fff !important;}          /* Abu (Tidak eligible) */
+
+    .info{margin:15px 0;padding:15px;background:#d6eaf8;border-left:5px solid #2980b9;border-radius:4px;color:#1a1a1a;}
+    .info strong{color:#1a1a1a;}
+    .limit-box{margin:15px 0;display:flex;align-items:center;gap:10px;font-weight:bold;color:#2c3e50;}
+    .limit-box input{width:80px;padding:6px;font-size:15px;}
+
+    .selisih{font-weight:bold;}
+    .selisih-positive{color:#27ae60;}
+    .selisih-zero{color:#f1c40f;}
+    .selisih-negative{color:#c0392b;}
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Prioritas Pendaftaran Jabatan Fungsional</h1>
+
+  <div class="info">
+    <strong>Rule Prioritas (FINAL - Selisih 0 Paling Atas):</strong><br>
+    • <span style="background:#c0392b;color:white;padding:3px 8px;border-radius:4px;font-weight:bold;">Selisih 0</span> → <strong>SUPER URGENT (WAJIB TAHUN INI!)</strong><br>
+    • <span style="background:#e74c3c;color:white;padding:3px 8px;border-radius:4px;font-weight:bold;">Selisih 1</span> → <strong>URGENT (Masih bisa tahun ini)</strong><br>
+    • Selisih ≥2 & eligible → <strong>Diurutkan timestamp</strong><br>
+    • Tidak eligible → Cadangan (diurutkan timestamp)<br>
+    • <strong>Urutan: Selisih 0 > Selisih 1 > Selisih ≥2 > Tidak eligible</strong>
+  </div>
+
+  <div class="upload-area">
+    <p><strong>Unggah File Excel (.xlsx)</strong></p>
+    <input type="file" id="excelInput" accept=".xlsx,.xls">
+  </div>
+
+  <div class="limit-box">
+    <label for="limitInput">Tampilkan hanya</label>
+    <input type="number" id="limitInput" min="1" placeholder="10" value="10">
+    <span>data teratas</span>
+  </div>
+
+  <button id="processBtn" disabled>Proses & Urutkan</button>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  const fileInput   = document.getElementById('excelInput');
+  const limitInput  = document.getElementById('limitInput');
+  const processBtn  = document.getElementById('processBtn');
+  const resultDiv   = document.getElementById('result');
+
+  fileInput.addEventListener('change', ()=>processBtn.disabled=!fileInput.files.length);
+  processBtn.addEventListener('click', ()=>processFile());
+
+  // === KONVERSI EXCEL SERIAL DATE ===
+  function excelDateToJSDate(serial) {
+    if (!serial || serial === 0) return new Date(0);
+    const utc_days = Math.floor(serial - 25569);
+    const utc_value = utc_days * 86400 * 1000;
+    const date_info = new Date(utc_value);
+    const fractional_day = serial - Math.floor(serial) + 0.0000001;
+    let whole_day = Math.floor((date_info.getTime() / 86400000) + fractional_day);
+    return new Date(whole_day * 86400000);
+  }
+
+  // === PARSE TIMESTAMP AMAN ===
+  function safeParseTimestamp(val) {
+    if (!val) return new Date(0);
+    if (typeof val === 'number' && val > 0 && val < 2958465) {
+      return excelDateToJSDate(val);
+    }
+    if (typeof val === 'string') {
+      const trimmed = val.trim();
+      if (!trimmed) return new Date(0);
+      const isoMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})[T\s](\d{2}):(\d{2})/);
+      if (isoMatch) return new Date(trimmed.replace(' ', 'T'));
+      const idMatch = trimmed.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})\s*(\d{1,2}):?(\d{2})?/);
+      if (idMatch) {
+        const [_, d, m, y, h = 0, i = 0] = idMatch;
+        return new Date(y, m-1, d, h, i);
+      }
+      const direct = new Date(trimmed);
+      return isNaN(direct.getTime()) ? new Date(0) : direct;
+    }
+    return val instanceof Date && !isNaN(val) ? val : new Date(0);
+  }
+
+  // === EKSTRAK TANGGAL LAHIR ===
+  function extractBirthDate(nip){
+    const s = nip.toString().trim();
+    if(s.length<8) return null;
+    const y = +s.substr(0,4);
+    const m = +s.substr(4,2)-1;
+    const d = +s.substr(6,2);
+    return new Date(y,m,d);
+  }
+
+  function ageAtYear(birthDate,year){
+    const target = new Date(year,0,1);
+    let age = target.getFullYear() - birthDate.getFullYear();
+    const m = target.getMonth() - birthDate.getMonth();
+    if(m<0 || (m===0 && target.getDate()<birthDate.getDate())) age--;
+    return age;
+  }
+
+  function maxAge(jenjang){
+    const j = jenjang.toLowerCase();
+    if(j.includes('muda'))  return 53;
+    if(j.includes('madya')) return 55;
+    if(j.includes('utama')) return 60;
+    return null;
+  }
+
+  function isEligible(row, currentYear=2025){
+    const birth = extractBirthDate(row.NIP);
+    if(!birth) return false;
+    const max = maxAge(row['Jenjang Jabatan yang Dituju']);
+    if(max===null) return true;
+    const ageThis = ageAtYear(birth, currentYear);
+    const ageNext = ageAtYear(birth, currentYear+1);
+    return ageThis <= max || ageNext <= max;
+  }
+
+  function calculateSelisih(row, currentYear=2025){
+    const birth = extractBirthDate(row.NIP);
+    if(!birth) return null;
+    const max = maxAge(row['Jenjang Jabatan yang Dituju']);
+    if(max===null) return null;
+    const ageThis = ageAtYear(birth, currentYear);
+    const ageNext = ageAtYear(birth, currentYear+1);
+    const effectiveAge = Math.min(ageThis, ageNext);
+    return max - effectiveAge;
+  }
+
+  // === PRIORITAS: Selisih 0 > 1 > ≥2 > Tidak eligible ===
+  function getPriorityLevel(row){
+    if(!row.eligible) return 0;
+    if(row.selisih === 0) return 4;  // SUPER URGENT
+    if(row.selisih === 1) return 3;  // URGENT
+    return 2;                        // Normal eligible
+  }
+
+  // === PROSES DATA ===
+  function processData(data){
+    const now = 2025;
+    return data
+      .map((row,idx)=>({
+        ...row,
+        birthDate : extractBirthDate(row.NIP),
+        timestamp : safeParseTimestamp(row.Timestamp),
+        eligible  : isEligible(row, now),
+        selisih   : calculateSelisih(row, now),
+        origIdx   : idx
+      }))
+      .map(row => ({
+        ...row,
+        priorityLevel: getPriorityLevel(row)
+      }))
+      .sort((a,b)=>{
+        // 1. Prioritas level: 4 > 3 > 2 > 0
+        if(a.priorityLevel !== b.priorityLevel) return b.priorityLevel - a.priorityLevel;
+        // 2. Dalam level sama → urut timestamp
+        return a.timestamp - b.timestamp;
+      })
+      .map((r,i)=>({...r, rank:i+1}));
+  }
+
+  // === TAMPILKAN HASIL ===
+  function displayResult(data, total, limit){
+    if(!data.length){
+      resultDiv.innerHTML='<p style="color:#c0392b;font-weight:bold;">Tidak ada data.</p>';
+      return;
+    }
+
+    const shown = data.length;
+    const info  = limit===Infinity ? `Semua data (${total} baris)` : `Menampilkan ${shown} dari ${total} baris`;
+
+    let html = `<h2>Hasil Pengurutan – Selisih 0 Paling Atas</h2>
+                <p style="font-weight:bold;color:#1a1a1a;">${info}</p>
+                <table>
+                  <tr>
+                    <th>Rank</th><th>No</th><th>Nama</th><th>NIP</th>
+                    <th>Usia Efektif</th><th>Jenjang</th>
+                    <th>Selisih</th><th>Timestamp</th><th>Status</th>
+                  </tr>`;
+
+    data.forEach(r=>{
+      const ageEff = r.birthDate ? Math.min(ageAtYear(r.birthDate,2025), ageAtYear(r.birthDate,2026)) : '—';
+      let rowClass = 'low';
+      let statusTxt = 'TIDAK MEMENUHI';
+
+      if(r.eligible){
+        if(r.selisih === 0){
+          rowClass = 'super-urgent';
+          statusTxt = 'SUPER URGENT (WAJIB TAHUN INI)';
+        } else if(r.selisih === 1){
+          rowClass = 'urgent';
+          statusTxt = 'URGENT (Masih bisa tahun ini)';
+        } else {
+          rowClass = 'normal';
+          statusTxt = 'MEMENUHI';
+        }
+      }
+
+      const selClass = r.selisih > 0 ? 'selisih-positive' :
+                       r.selisih === 0 ? 'selisih-zero' :
+                       r.selisih < 0 ? 'selisih-negative' : '';
+
+      const timestampStr = r.timestamp && r.timestamp.getTime() > 0
+        ? r.timestamp.toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'medium' })
+        : '—';
+
+      html += `<tr class="${rowClass}">
+        <td style="color:#fff;font-weight:bold;">${r.rank}</td>
+        <td style="color:#fff;">${r.No||'-'}</td>
+        <td style="color:#fff;">${r.Nama}</td>
+        <td style="color:#fff;">${r.NIP}</td>
+        <td style="color:#fff;">${ageEff}</td>
+        <td style="color:#fff;">${r['Jenjang Jabatan yang Dituju']}</td>
+        <td class="selisih ${selClass}" style="color:#fff;">${r.selisih!==null?r.selisih:'—'}</td>
+        <td style="color:#fff;font-size:13px;">${timestampStr}</td>
+        <td style="color:#fff;font-weight:bold;">${statusTxt}</td>
+      </tr>`;
+    });
+
+    html += `</table>
+             <p style="color:#1a1a1a;margin-top:20px;"><strong>Keterangan Warna:</strong><br>
+             <span style="background:#c0392b;color:white;padding:4px 8px;border-radius:4px;">Merah Tua</span> = Selisih 0 → WAJIB TAHUN INI!<br>
+             <span style="background:#e74c3c;color:white;padding:4px 8px;border-radius:4px;">Merah Muda</span> = Selisih 1 → Urgent<br>
+             <span style="background:#f39c12;color:white;padding:4px 8px;border-radius:4px;">Oranye</span> = Selisih ≥2 → Urut timestamp<br>
+             <span style="background:#95a5a6;color:white;padding:4px 8px;border-radius:4px;">Abu</span> = Tidak eligible</p>`;
+    resultDiv.innerHTML = html;
+  }
+
+  // === PROSES FILE ===
+  function processFile(){
+    const file = fileInput.files[0];
+    if(!file) return alert('Pilih file Excel!');
+
+    const limit = parseInt(limitInput.value) || Infinity;
+
+    const reader = new FileReader();
+    reader.onload = e=>{
+      try {
+        const data = new Uint8Array(e.target.result);
+        const wb   = XLSX.read(data,{type:'array', cellDates: true});
+        const ws   = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(ws, {raw: false});
+
+        const processed = processData(json);
+        const limited   = processed.slice(0, limit);
+        displayResult(limited, processed.length, limit);
+      } catch(err) {
+        alert('Error: ' + err.message);
+        console.error(err);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+</script>
+</body>
+</html>

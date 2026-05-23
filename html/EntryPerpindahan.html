@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pendaftaran Uji Kompetensi</title>
+  <style>
+  :root{
+    --bg:#2f3742;
+    --panel:#f8fafc;
+    --muted:#6b7280;
+    --accent-green:#028a0f;
+    --card-shadow: 0 10px 30px rgba(10,20,30,0.35);
+    --radius:12px;
+    --max-width:1100px;
+    --field-border:#cbd5e1;
+  }
+  html,body {height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  body {background:linear-gradient(180deg,#233042 0%, #2f3742 100%);display:flex;align-items:flex-start;justify-content:center;padding:36px;}
+
+  .container {max-width:var(--max-width);width:100%;padding:18px;box-sizing:border-box;}
+  .header-card {
+    background:var(--panel);
+    border-radius:var(--radius);
+    padding:20px 24px;
+    box-shadow:var(--card-shadow);
+    margin-bottom:18px;
+  }
+  .header-top {font-size:14px;color:var(--muted);margin-bottom:6px;}
+  .header-title {font-size:20px;font-weight:700;color:#0b1720;margin:0;}
+
+  .card {background:var(--panel);border-radius:var(--radius);box-shadow:var(--card-shadow);padding:22px;}
+
+  table {width:100%;border-collapse:collapse;margin-bottom:20px;}
+  td.label {width:30%;padding:8px 12px;vertical-align:top;background:#f1f5f9;border:1px solid var(--field-border);font-weight:600;color:#0b1720;font-size:14px;}
+  td.field {border:1px solid var(--field-border);padding:8px 12px;}
+
+  .input-text {
+    width:100%;border:none;border-bottom:1px solid #6b7280;padding:6px 4px;font-size:14px;background:transparent;color:#0b1720;box-sizing:border-box;
+  }
+  .input-text:focus {outline:none;border-bottom:2px solid var(--accent-green);}
+  select.input-text, select {border-bottom:1px solid #6b7280;}
+
+  .upload-grid {
+    width:100%;border-collapse:collapse;margin-top:12px;
+  }
+  .upload-grid td {padding:8px;vertical-align:middle;border-bottom:1px solid var(--field-border);}
+  .upload-label {font-size:14px;font-weight:600;color:#0b1720;width:35%;}
+  .upload-hint {color:var(--accent-green);font-size:13px;margin-left:8px;}
+
+  .actions {display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
+  button {
+    background:var(--accent-green);color:#fff;padding:10px 18px;border-radius:10px;border:0;font-weight:700;cursor:pointer;font-size:14px;
+  }
+  button.alt {background:#fff;color:var(--accent-green);border:1px solid #d1e7d2;}
+</style>
+
+</head>
+<body>
+  <div class="container">
+
+    <!-- Top header card with two lines -->
+    <div class="header-card">
+      <div class="header-top">Direktorat Bina Teknik Perumahan dan Kawasan Permukiman</div>
+      <h1 class="header-title">Pendaftaran Uji Kompetensi — Perpindahan Jabatan</h1>
+      
+    </div>
+
+    <!-- Main form card -->
+    <div class="card" role="main" aria-labelledby="form-title">
+      <form id="ujiform" enctype="multipart/form-data" novalidate>
+  <h2 id="form-title" style="margin:0 0 10px;font-size:18px;color:#0b1720">Formulir Peserta</h2>
+  <p style="margin:0 0 14px;color:var(--muted)">Isi data peserta dan unggah dokumen sesuai instruksi. Field bertanda <span class="required-star">*</span> wajib diisi.</p>
+
+  <!-- Biodata -->
+  <table>
+    <tr><td class="label">Nama Lengkap dan Gelar <span class="required-star">*</span></td><td class="field"><input type="text" name="nama" id="nama" class="input-text" required></td></tr>
+    <tr><td class="label">NIP <span class="required-star">*</span></td><td class="field"><input type="text" name="nip" id="nip" class="input-text" required></td></tr>
+    <tr><td class="label">Jabatan Saat Ini <span class="required-star">*</span></td><td class="field"><input type="text" name="jabatan" id="jabatan" class="input-text" required></td></tr>
+    <tr><td class="label">Pangkat / Golongan <span class="required-star">*</span></td><td class="field">
+      <select name="pangkat" id="pangkat" class="input-text" required>
+        <option value="">-- Pilih pangkat/golongan --</option>
+        <option value="III/a (Penata Muda)">III/a (Penata Muda)</option>
+        <option value="III/b (Penata Muda Tk. I)">III/b (Penata Muda Tk. I)</option>
+        <option value="III/c (Penata)">III/c (Penata)</option>
+        <option value="III/d (Penata Tk. I)">III/d (Penata Tk. I)</option>
+        <option value="IV/a (Pembina)">IV/a (Pembina)</option>
+        <option value="IV/b (Pembina Tk. I)">IV/b (Pembina Tk. I)</option>
+        <option value="IV/c (Pembina Utama Muda)">IV/c (Pembina Utama Muda)</option>
+      </select>
+    </td></tr>
+    <tr><td class="label">TMT Pangkat / Golongan <span class="required-star">*</span></td><td class="field"><input type="date" name="tmt" id="tmt" class="input-text" required></td></tr>
+    <tr><td class="label">Jenjang Pendidikan Terakhir <span class="required-star">*</span></td>
+    <td class="field">
+      <label><input type="radio" name="jenjang" value="S1/D4" required> S1 / D4</label>
+      <label style="margin-left:14px"><input type="radio" name="jenjang" value="S2"> S2</label>
+      <label style="margin-left:14px"><input type="radio" name="jenjang" value="S3"> S3</label>
+    </td></tr>
+    <tr><td class="label">Program Studi <span class="required-star">*</span></td><td class="field"><input type="text" name="prodi" id="prodi" class="input-text" required></td></tr>
+    <tr><td class="label">Email <span class="required-star">*</span></td><td class="field"><input type="email" name="email" id="email" class="input-text" required></td></tr>
+    <tr><td class="label">No. Handphone (WA) <span class="required-star">*</span></td><td class="field"><input type="text" name="hp" id="hp" class="input-text" required></td></tr>
+  </table>
+
+  <!-- Data Instansi -->
+  <h3 style="margin:20px 0 10px;color:#0b1720;font-size:16px;">Data Instansi</h3>
+  <table>
+    <tr>
+      <td class="label">Instansi <span class="required-star">*</span></td>
+      <td class="field">
+        <select name="instansi" id="instansi" class="input-text" required>
+          <option value="">-- Pilih instansi --</option>
+          <option value="Kementerian PU">Kementerian PU</option>
+          <option value="Kementerian PKP">Kementerian PKP</option>
+          <option value="Pemerintah Daerah">Pemerintah Daerah</option>
+        </select>
+      </td>
+    </tr>
+    <tr><td class="label">Nama Unit Organisasi <span class="required-star">*</span></td><td class="field"><input type="text" name="unit_organisasi" id="unit_organisasi" class="input-text" placeholder="Contoh: Direktorat Jenderal Kawasan Permukiman" required></td></tr>
+    
+    <tr><td class="label">Instansi Daerah (jika Pemda)</td><td class="field"><input type="text" name="instansi_daerah" id="instansi_daerah" class="input-text" placeholder="Contoh: Pemerintah Provinsi Jawa Tengah"></td></tr>
+    <tr><td class="label">Unit Kerja Saat Ini <span class="required-star">*</span></td><td class="field"><input type="text" name="unit_saat_ini" id="unit_saat_ini" class="input-text" placeholder=""></td></tr>
+    <tr><td class="label">Unit Kerja Sebelumnya</td><td class="field"><input type="text" name="unit_sebelumnya" id="unit_sebelumnya" class="input-text" placeholder=""></td></tr>
+  </table>
+
+  <!-- Upload Dokumen -->
+  <h3 style="margin:20px 0 10px;color:#0b1720;font-size:16px;">Unggah Dokumen Persyaratan</h3>
+  <table class="upload-grid">
+    <tr><td class="upload-label">Surat Usulan Perpindahan Jabatan <span class="required-star">*</span></td>
+      <td><input type="file" name="file_surat_usulan_perpindahan" accept=".pdf" required><span class="upload-hint">(nama file: Usulan_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Dokumen Penetapan Kebutuhan JF <span class="required-star">*</span></td>
+      <td><input type="file" name="file_dokumen_penetapan" accept=".pdf" required><span class="upload-hint">(nama file: Kebutuhan_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Surat Usulan Uji Kompetensi <span class="required-star">*</span></td>
+      <td><input type="file" name="file_surat_usulan_uji" accept=".pdf" required><span class="upload-hint">(nama file: Surat_Ukom_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Daftar Riwayat Hidup / Portofolio <span class="required-star">*</span></td>
+      <td><input type="file" name="file_portofolio" accept=".pdf" required><span class="upload-hint">(nama file: DRH_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Salinan SK CPNS dan SK PNS <span class="required-star">*</span></td>
+      <td><input type="file" name="file_sk_cpns_pns" accept=".pdf" required><span class="upload-hint">(nama file: CPNS_PNS_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Salinan SK Pangkat/Golongan <span class="required-star">*</span></td>
+      <td><input type="file" name="file_sk_pangkat" accept=".pdf" required><span class="upload-hint">(nama file: Pangkat_Golongan_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Salinan SK Jabatan Terakhir <span class="required-star">*</span></td>
+      <td><input type="file" name="file_sk_jabatan" accept=".pdf" required><span class="upload-hint">(nama file: Jabatan_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Salinan SKP 2 Tahun Terakhir <span class="required-star">*</span></td>
+      <td><input type="file" name="file_skp" accept=".pdf" required><span class="upload-hint">(nama file: SKP_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Salinan Ijazah dan Transkrip <span class="required-star">*</span></td>
+      <td><input type="file" name="file_ijazah_transkrip" accept=".pdf" required><span class="upload-hint">(nama file: Ijazah_Transkrip_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Surat Pernyataan Integritas/Moralitas <span class="required-star">*</span></td>
+      <td><input type="file" name="file_pernyataan_integritas" accept=".pdf" required><span class="upload-hint">(nama file: Integritas_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Surat Pernyataan Bersedia Diangkat <span class="required-star">*</span></td>
+      <td><input type="file" name="file_pernyataan_bersedia" accept=".pdf" required><span class="upload-hint">(nama file: Kesediaan_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Surat Pernyataan Pengalaman Perumahan <span class="required-star">*</span></td>
+      <td><input type="file" name="file_pernyataan_pengalaman" accept=".pdf" required><span class="upload-hint">(nama file: Pengalaman_NIP_Nama)</span></td></tr>
+    <tr><td class="upload-label">Rencana Penempatan PNS <span class="required-star">*</span></td>
+      <td><input type="file" name="file_rencana_penempatan" accept=".pdf" required><span class="upload-hint">(nama file: Penempatan_NIP_Nama)</span></td></tr>
+  </table>
+
+  <!-- Buttons -->
+  <div class="actions">
+    <button type="submit">Kirim Pendaftaran</button>
+    <button type="reset" class="alt">Reset</button>
+  </div>
+</form>
+
+    </div>
+
+  </div>
+
+  <script>
+  // --- CONFIG ---
+  const maxSize = 10 * 1024 * 1024; // 10 MB
+
+  // --- HELPERS ---
+  function qs(selector, ctx = document) { return ctx.querySelector(selector); }
+  function qsa(selector, ctx = document) { return Array.from(ctx.querySelectorAll(selector)); }
+
+  // --- INSTANSI / UNIT LOGIC ---
+  function applyInstansiRule() {
+    const instansi = qs('#instansi');
+    const unitOrganisasi = qs('#unit_organisasi');
+    const unitKerja = qs('#unit_kerja');
+    const instansiDaerah = qs('#instansi_daerah');
+
+    if (!instansi) return;
+
+    const isPemda = instansi.value === 'Pemerintah Daerah';
+
+    // Sesuai permintaan: jika Pemerintah Daerah -> NON-AKTIFKAN Nama Unit Organisasi
+    if (unitOrganisasi) {
+      unitOrganisasi.disabled = isPemda;
+      unitOrganisasi.setAttribute('aria-disabled', isPemda ? 'true' : 'false');
+      if (isPemda) unitOrganisasi.value = '';
+    }
+
+    // Optional: jika Anda juga mau nonaktifkan unit_kerja saat Pemda,
+    // uncomment baris di bawah ini. Sekarang saya biarkan aktif (sesuai instruksi terakhir).
+    // if (unitKerja) { unitKerja.disabled = isPemda; if(isPemda) unitKerja.value=''; }
+
+    // Aktifkan input untuk Nama Instansi Daerah hanya bila Pemda terpilih
+    if (instansiDaerah) {
+      instansiDaerah.disabled = !isPemda;
+      if (!isPemda) instansiDaerah.value = '';
+      instansiDaerah.setAttribute('aria-disabled', (!isPemda).toString());
+    }
+  }
+
+  // --- FILE PREVIEW & VALIDATION ---
+  const form = qs('#ujiform');
+  const fileInputs = form ? qsa('input[type="file"]', form) : [];
+
+  function setupFilePreviews() {
+    fileInputs.forEach(fi => {
+      const previewId = 'preview_' + fi.name;
+      let preview = document.getElementById(previewId);
+      // if preview element doesn't exist, create a hidden span to avoid null checks
+      if (!preview) {
+        preview = document.createElement('span');
+        preview.id = previewId;
+        preview.className = 'file-preview';
+        fi.insertAdjacentElement('afterend', preview);
+      }
+
+      fi.addEventListener('change', (e) => {
+        const f = e.target.files[0];
+        if (!f) { preview.textContent = ''; return; }
+        const isPdf = f.name.toLowerCase().endsWith('.pdf');
+        if (!isPdf) { preview.textContent = 'File harus PDF'; return; }
+        if (f.size > maxSize) { preview.textContent = 'File terlalu besar (>10 MB)'; return; }
+        preview.textContent = `${f.name} (${Math.round(f.size/1024)} KB)`;
+      });
+    });
+  }
+
+  // --- RESET HANDLER ---
+  function setupReset() {
+    const btnReset = qs('#btn-reset') || qs('button[type="reset"]');
+    if (!btnReset) return;
+    btnReset.addEventListener('click', () => {
+      if (!confirm('Reset semua field?')) return;
+      form.reset();
+      fileInputs.forEach(fi => {
+        const preview = document.getElementById('preview_' + fi.name);
+        if (preview) preview.textContent = '';
+      });
+      // reapply instansi rule after reset
+      applyInstansiRule();
+      const submitResult = qs('#submit-result');
+      if (submitResult) submitResult.innerHTML = '';
+    });
+  }
+
+  // --- FORM SUBMIT VALIDATION ---
+  function setupSubmit() {
+    if (!form) return;
+    form.addEventListener('submit', (ev) => {
+      ev.preventDefault();
+      let ok = true;
+
+      // clear previous error msgs
+      qsa('.error', form).forEach(el => el.textContent = '');
+
+      const requiredIds = ['nama','nip','jabatan','email','hp','pangkat','tmt'];
+      requiredIds.forEach(id => {
+        const el = qs('#' + id);
+        if (el && !String(el.value || '').trim()) {
+          ok = false;
+          const err = qs('#err-' + id);
+          if (err) err.textContent = 'Wajib diisi';
+        }
+      });
+
+      // required files check
+      const requiredFiles = fileInputs.filter(i => i.hasAttribute('required'));
+      for (const fi of requiredFiles) {
+        if (!fi.files || fi.files.length === 0) {
+          const p = document.getElementById('preview_' + fi.name);
+          if (p) p.textContent = 'Belum ada file (wajib)';
+          ok = false;
+        } else {
+          const f = fi.files[0];
+          if (!f.name.toLowerCase().endsWith('.pdf')) {
+            const p = document.getElementById('preview_' + fi.name);
+            if (p) p.textContent = 'File harus PDF';
+            ok = false;
+          }
+          if (f.size > maxSize) {
+            const p = document.getElementById('preview_' + fi.name);
+            if (p) p.textContent = 'File terlalu besar (>10 MB)';
+            ok = false;
+          }
+        }
+      }
+
+      if (!ok) {
+        const submitResult = qs('#submit-result');
+        if (submitResult) submitResult.innerHTML = '<div style="color:#b91c1c">Form belum lengkap. Periksa kembali.</div>';
+        return;
+      }
+
+      // demo: tampilkan ringkasan (nama file + field)
+      const fd = new FormData(form);
+      const summary = {};
+      for (const [k,v] of fd.entries()) {
+        summary[k] = (v instanceof File) ? v.name : v;
+      }
+      const submitResult = qs('#submit-result');
+      if (submitResult) submitResult.innerHTML = '<pre style="white-space:pre-wrap;background:#f1f5f9;padding:12px;border-radius:8px;color:#0b1720">'+ JSON.stringify(summary,null,2) +'</pre>';
+    });
+  }
+
+  // --- INIT ---
+  document.addEventListener('DOMContentLoaded', () => {
+    // setup
+    applyInstansiRule();
+    const instansiSelect = qs('#instansi');
+    if (instansiSelect) instansiSelect.addEventListener('change', applyInstansiRule);
+
+    setupFilePreviews();
+    setupReset();
+    setupSubmit();
+  });
+</script>
+
+</body>
+</html>

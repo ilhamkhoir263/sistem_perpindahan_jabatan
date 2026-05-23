@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Detail Pendaftaran — Uji Kompetensi</title>
+  <style>
+    :root{
+      --bg:#2f3742;
+      --panel:#f8fafc;
+      --muted:#6b7280;
+      --accent-green:#028a0f;
+      --card-shadow: 0 10px 30px rgba(10,20,30,0.35);
+      --radius:12px;
+      --max-width:1100px;
+      --field-border:#cbd5e1;
+      --link:#028a0f;
+    }
+    html,body {height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body {background:linear-gradient(180deg,#233042 0%, #2f3742 100%);display:flex;align-items:flex-start;justify-content:center;padding:36px;}
+
+    .container {max-width:var(--max-width);width:100%;padding:18px;box-sizing:border-box;}
+    .header-card {
+      background:var(--panel);
+      border-radius:var(--radius);
+      padding:20px 24px;
+      box-shadow:var(--card-shadow);
+      margin-bottom:18px;
+    }
+    .header-top {font-size:14px;color:var(--muted);margin-bottom:6px;}
+    .header-title {font-size:20px;font-weight:700;color:#0b1720;margin:0;}
+
+    .card {background:var(--panel);border-radius:var(--radius);box-shadow:var(--card-shadow);padding:22px;}
+    .section-title {font-size:16px;font-weight:600;color:#0b1720;margin:24px 0 12px;border-bottom:2px solid #e2e8f0;padding-bottom:6px;}
+
+    /* Tabel Biodata & Instansi */
+    table {width:100%;border-collapse:collapse;margin-bottom:20px;}
+    td.label {width:30%;padding:10px 12px;vertical-align:top;background:#f1f5f9;border:1px solid var(--field-border);font-weight:600;color:#0b1720;font-size:14px;}
+    td.value {border:1px solid var(--field-border);padding:10px 12px;font-size:14px;color:#0b1720;}
+
+    /* Tabel Dokumen */
+    .doc-table {width:100%;border-collapse:collapse;margin-top:12px;}
+    .doc-table th,
+    .doc-table td {
+      padding:12px;
+      border:1px solid var(--field-border);
+      vertical-align:middle;
+      font-size:14px;
+      color:#0b1720;
+    }
+    .doc-table th {
+      background:#f1f5f9;
+      font-weight:600;
+      text-align:center !important;   /* HANYA NAMA KOLOM CENTER */
+    }
+
+    /* Isi sel (bukan header) */
+    .doc-table .col-berkas td   {text-align:left !important;}   /* Berkas: isi rata kiri */
+    .doc-table .col-status td   {text-align:center !important;} /* Verifikasi: isi center */
+    .doc-table .col-file td     {text-align:right !important;}  /* File: isi rata kanan */
+
+    .doc-table .col-berkas {width:45%;}
+    .doc-table .col-status {width:25%;}
+    .doc-table .col-file   {width:30%;}
+
+    .file-name {
+      color:var(--link);
+      cursor:pointer;
+      text-decoration:underline;
+      font-size:14px;
+    }
+    .file-name:hover {color:#016d0c;}
+
+    /* Status Badge */
+    .status-badge {
+      display:inline-block;
+      padding:6px 14px;
+      border-radius:6px;
+      font-size:12px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+      min-width:110px;
+      text-align:center;
+    }
+    .status-sesuai {background:#d1fae5;color:#065f46 !important;}
+    .status-tidak  {background:#fee2e2;color:#991b1b !important;}
+    .status-belum  {background:#e5e7eb;color:#4b5563 !important;}
+
+    .actions {display:flex;justify-content:flex-end;gap:12px;margin-top:30px;}
+    button {
+      background:var(--accent-green);color:#fff;padding:11px 20px;border-radius:10px;border:0;font-weight:700;cursor:pointer;font-size:14px;
+    }
+    button.alt {background:#fff;color:var(--accent-green);border:1px solid #d1e7d2;}
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header-card">
+      <div class="header-top">Direktorat Bina Teknik Perumahan dan Kawasan Permukiman</div>
+      <h1 class="header-title">Detail Pendaftaran — Perpindahan Jabatan</h1>
+    </div>
+
+    <!-- Detail Card -->
+    <div class="card">
+
+      <!-- Biodata -->
+      <h2 class="section-title">Biodata Peserta</h2>
+      <table>
+        <tr><td class="label">Nama Lengkap dan Gelar</td><td class="value" id="det-nama">-</td></tr>
+        <tr><td class="label">NIP</td><td class="value" id="det-nip">-</td></tr>
+        <tr><td class="label">Jabatan Saat Ini</td><td class="value" id="det-jabatan">-</td></tr>
+        <tr><td class="label">Pangkat / Golongan</td><td class="value" id="det-pangkat">-</td></tr>
+        <tr><td class="label">TMT Pangkat / Golongan</td><td class="value" id="det-tmt">-</td></tr>
+        <tr><td class="label">Jenjang Pendidikan Terakhir</td><td class="value" id="det-jenjang">-</td></tr>
+        <tr><td class="label">Program Studi</td><td class="value" id="det-prodi">-</td></tr>
+        <tr><td class="label">Email</td><td class="value" id="det-email">-</td></tr>
+        <tr><td class="label">No. Handphone (WA)</td><td class="value" id="det-hp">-</td></tr>
+      </table>
+
+      <!-- Data Instansi -->
+      <h2 class="section-title">Data Instansi</h2>
+      <table>
+        <tr><td class="label">Instansi</td><td class="value" id="det-instansi">-</td></tr>
+        <tr><td class="label">Nama Unit Organisasi</td><td class="value" id="det-unit-org">-</td></tr>
+        <tr><td class="label">Instansi Daerah</td><td class="value" id="det-instansi-daerah">-</td></tr>
+        <tr><td class="label">Unit Kerja Saat Ini</td><td class="value" id="det-unit-saat-ini">-</td></tr>
+        <tr><td class="label">Unit Kerja Sebelumnya</td><td class="value" id="det-unit-sebelumnya">-</td></tr>
+      </table>
+
+      <!-- Dokumen -->
+      <h2 class="section-title">Dokumen yang Diunggah</h2>
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th class="col-berkas">Berkas</th>
+            <th class="col-status">Hasil Verifikasi</th>
+            <th class="col-file">File</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Surat Usulan Perpindahan Jabatan</td>
+            <td><span class="status-badge status-belum" id="status-file_surat_usulan_perpindahan">Belum Diverifikasi</span></td>
+            <td><span class="file-name" id="det-file_surat_usulan_perpindahan">-</span></td>
+          </tr>
+          <tr>
+            <td>Dokumen Penetapan Kebutuhan JF</td>
+            <td><span class="status-badge status-sesuai" id="status-file_dokumen_penetapan">Sesuai</span></td>
+            <td><span class="file-name" id="det-file_dokumen_penetapan">-</span></td>
+          </tr>
+          <tr>
+            <td>Surat Usulan Uji Kompetensi</td>
+            <td><span class="status-badge status-belum" id="status-file_surat_usulan_uji">Belum Diverifikasi</span></td>
+            <td><span class="file-name" id="det-file_surat_usulan_uji">-</span></td>
+          </tr>
+          <tr>
+            <td>Daftar Riwayat Hidup / Portofolio</td>
+            <td><span class="status-badge status-tidak" id="status-file_portofolio">Tidak Sesuai</span></td>
+            <td><span class="file-name" id="det-file_portofolio">-</span></td>
+          </tr>
+          <tr>
+            <td>Salinan SK CPNS dan SK PNS</td>
+            <td><span class="status-badge status-sesuai" id="status-file_sk_cpns_pns">Sesuai</span></td>
+            <td><span class="file-name" id="det-file_sk_cpns_pns">-</span></td>
+          </tr>
+          <tr>
+            <td>Salinan SK Pangkat/Golongan</td>
+            <td><span class="status-badge status-belum" id="status-file_sk_pangkat">Belum Diverifikasi</span></td>
+            <td><span class="file-name" id="det-file_sk_pangkat">-</span></td>
+          </tr>
+          <tr>
+            <td>Salinan SK Jabatan Terakhir</td>
+            <td><span class="status-badge status-sesuai" id="status-file_sk_jabatan">Sesuai</span></td>
+            <td><span class="file-name" id="det-file_sk_jabatan">-</span></td>
+          </tr>
+          <tr>
+            <td>Salinan SKP 2 Tahun Terakhir</td>
+            <td><span class="status-badge status-belum" id="status-file_skp">Belum Diverifikasi</span></td>
+            <td><span class="file-name" id="det-file_skp">-</span></td>
+          </tr>
+          <tr>
+            <td>Salinan Ijazah dan Transkrip</td>
+            <td><span class="status-badge status-sesuai" id="status-file_ijazah_transkrip">Sesuai</span></td>
+            <td><span class="file-name" id="det-file_ijazah_transkrip">-</span></td>
+          </tr>
+          <tr>
+            <td>Surat Pernyataan Integritas/Moralitas</td>
+            <td><span class="status-badge status-belum" id="status-file_pernyataan_integritas">Belum Diverifikasi</span></td>
+            <td><span class="file-name" id="det-file_pernyataan_integritas">-</span></td>
+          </tr>
+          <tr>
+            <td>Surat Pernyataan Bersedia Diangkat</td>
+            <td><span class="status-badge status-sesuai" id="status-file_pernyataan_bersedia">Sesuai</span></td>
+            <td><span class="file-name" id="det-file_pernyataan_bersedia">-</span></td>
+          </tr>
+          <tr>
+            <td>Surat Pernyataan Pengalaman Perumahan</td>
+            <td><span class="status-badge status-tidak" id="status-file_pernyataan_pengalaman">Tidak Sesuai</span></td>
+            <td><span class="file-name" id="det-file_pernyataan_pengalaman">-</span></td>
+          </tr>
+          <tr>
+            <td>Rencana Penempatan PNS</td>
+            <td><span class="status-badge status-belum" id="status-file_rencana_penempatan">Belum Diverifikasi</span></td>
+            <td><span class="file-name" id="det-file_rencana_penempatan">-</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button type="button" id="btnEdit">Edit Data</button>
+        <button type="button" class="alt" onclick="window.history.back()">Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- DATA DUMMY ---
+    const sampleData = {
+      nama: "RIEZA PERDANA, ST",
+      nip: "198702222011011002",
+      jabatan: "Analis Kebijakan Ahli Pertama",
+      pangkat: "III/b (Penata Muda Tk. I)",
+      tmt: "2023-04-01",
+      jenjang: "S1/D4",
+      prodi: "Teknik Sipil",
+      email: "rieza.perdana@pupr.go.id",
+      hp: "085739933664",
+      instansi: "Kementerian PU",
+      unit_organisasi: "Direktorat Jenderal Kawasan Permukiman",
+      instansi_daerah: "",
+      unit_saat_ini: "Subdit Perencanaan Teknis",
+      unit_sebelumnya: "Balai Wilayah Sungai Jawa Tengah",
+
+      file_surat_usulan_perpindahan: "Usulan_198702222011011002_Rieza.pdf",
+      file_dokumen_penetapan: "Kebutuhan_198702222011011002_Rieza.pdf",
+      file_surat_usulan_uji: "Surat_Ukom_198702222011011002_Rieza.pdf",
+      file_portofolio: "DRH_198702222011011002_Rieza.pdf",
+      file_sk_cpns_pns: "CPNS_PNS_198702222011011002_Rieza.pdf",
+      file_sk_pangkat: "Pangkat_Golongan_198702222011011002_Rieza.pdf",
+      file_sk_jabatan: "Jabatan_198702222011011002_Rieza.pdf",
+      file_skp: "SKP_198702222011011002_Rieza.pdf",
+      file_ijazah_transkrip: "Ijazah_Transkrip_198702222011011002_Rieza.pdf",
+      file_pernyataan_integritas: "Integritas_198702222011011002_Rieza.pdf",
+      file_pernyataan_bersedia: "Kesediaan_198702222011011002_Rieza.pdf",
+      file_pernyataan_pengalaman: "Pengalaman_198702222011011002_Rieza.pdf",
+      file_rencana_penempatan: "Penempatan_198702222011011002_Rieza.pdf"
+    };
+
+    const verifikasiStatus = {
+      file_surat_usulan_perpindahan: "Belum Diverifikasi",
+      file_dokumen_penetapan: "Sesuai",
+      file_surat_usulan_uji: "Belum Diverifikasi",
+      file_portofolio: "Tidak Sesuai",
+      file_sk_cpns_pns: "Sesuai",
+      file_sk_pangkat: "Belum Diverifikasi",
+      file_sk_jabatan: "Sesuai",
+      file_skp: "Belum Diverifikasi",
+      file_ijazah_transkrip: "Sesuai",
+      file_pernyataan_integritas: "Belum Diverifikasi",
+      file_pernyataan_bersedia: "Sesuai",
+      file_pernyataan_pengalaman: "Tidak Sesuai",
+      file_rencana_penempatan: "Belum Diverifikasi"
+    };
+
+    const PDF_BASE = "uploads/";
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Biodata
+      document.getElementById('det-nama').textContent = sampleData.nama;
+      document.getElementById('det-nip').textContent = sampleData.nip;
+      document.getElementById('det-jabatan').textContent = sampleData.jabatan;
+      document.getElementById('det-pangkat').textContent = sampleData.pangkat;
+      document.getElementById('det-tmt').textContent = sampleData.tmt;
+      document.getElementById('det-jenjang').textContent = sampleData.jenjang;
+      document.getElementById('det-prodi').textContent = sampleData.prodi;
+      document.getElementById('det-email').textContent = sampleData.email;
+      document.getElementById('det-hp').textContent = sampleData.hp;
+
+      // Instansi
+      document.getElementById('det-instansi').textContent = sampleData.instansi;
+      document.getElementById('det-unit-org').textContent = sampleData.unit_organisasi || '-';
+      document.getElementById('det-instansi-daerah').textContent = sampleData.instansi_daerah || '-';
+      document.getElementById('det-unit-saat-ini').textContent = sampleData.unit_saat_ini || '-';
+      document.getElementById('det-unit-sebelumnya').textContent = sampleData.unit_sebelumnya || '-';
+
+      // Dokumen
+      Object.keys(sampleData).forEach(key => {
+        if (key.startsWith('file_')) {
+          const fileEl = document.getElementById('det-' + key);
+          const statusEl = document.getElementById('status-' + key);
+          const fileName = sampleData[key];
+
+          if (fileName) {
+            const fullPath = PDF_BASE + fileName;
+            fileEl.textContent = fileName;
+            fileEl.onclick = () => window.open(fullPath, '_blank');
+            fileEl.style.cursor = 'pointer';
+            fileEl.style.color = 'var(--link)';
+            fileEl.style.textDecoration = 'underline';
+          } else {
+            fileEl.textContent = '-';
+          }
+
+          const status = verifikasiStatus[key] || "Belum Diverifikasi";
+          statusEl.textContent = status;
+          statusEl.className = 'status-badge';
+
+          if (status === "Sesuai") {
+            statusEl.classList.add('status-sesuai');
+          } else if (status === "Tidak Sesuai") {
+            statusEl.classList.add('status-tidak');
+          } else {
+            statusEl.classList.add('status-belum');
+          }
+        }
+      });
+
+      // Edit Button
+      document.getElementById('btnEdit').addEventListener('click', () => {
+        localStorage.setItem('editPerpindahanData', JSON.stringify(sampleData));
+        window.location.href = 'EntryPerpindahan.html?mode=edit';
+      });
+    });
+  </script>
+</body>
+</html>
